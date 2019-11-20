@@ -1,0 +1,10 @@
+extends layout
+
+block content
+  h1= title
+  |
+  form(action='/books/new', method='post', autocomplete='off')
+    include form
+    |
+    p
+      a.button(href='/') Cancel
