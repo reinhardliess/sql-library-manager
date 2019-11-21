@@ -2,20 +2,9 @@
 
 const express = require('express');
 const router = express.Router();
-const { errBook404 } = require('../lib/utils')
+const { asyncHandler, errBook404 } = require('../lib/utils')
 
 const { Book } = require('../models');
-
-/* Handler function to wrap each route. */
-function asyncHandler(cb) {
-  return async (req, res, next) => {
-    try {
-      await cb(req, res, next)
-    } catch (error) {
-      return next(error)
-    }
-  }
-}
 
 // GET listing of all books
 router.get('/', asyncHandler(async (req, res) => {
@@ -33,7 +22,7 @@ router.get('/new', (req, res) => {
 // POST create a new book
 router.post('/new', asyncHandler(async (req, res, next) => {
   try {
-    const book = await Book.create(req.body);
+    await Book.create(req.body);
     res.redirect('/');
   } catch (error) {
     // checking for validation error
@@ -69,7 +58,7 @@ router.post('/:id', asyncHandler(async (req, res, next) => {
       next(errBook404(id));
     }
   } catch (error) {
-    // checking the error
+    // checking for validation error
     if (error.name === "SequelizeValidationError") {
       const book = await Book.build(req.body);
       book.id = id;
@@ -83,7 +72,6 @@ router.post('/:id', asyncHandler(async (req, res, next) => {
 // POST Delete individual book
 router.post('/:id/delete', asyncHandler(async (req, res, next) => {
   const { id } = req.params;
-  console.log({ id })
   const book = await Book.findByPk(id);
   if (book) {
     await book.destroy();

@@ -16,9 +16,11 @@ block content
       input(type='submit', value='Delete Book')
   script.
     document.addEventListener('DOMContentLoaded', function () {
+        // Select first input field (title)
         const input = document.getElementById('title');
         input.focus();
         input.select();
+        // Select input fields when the corresponding label is clicked
         labels = document.getElementsByTagName('label');
         for (let label of labels) {
             label.addEventListener('click', function () {

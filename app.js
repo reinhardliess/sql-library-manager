@@ -8,7 +8,7 @@ Reinhard Liess, 2019
 
 // This project was bootstrapped with the express application generator
 
-// const createError = require('http-errors');
+// require necessary modules
 const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
@@ -18,7 +18,6 @@ const logger = require('morgan');
 const { stripHtml } = require('./lib/utils')
 
 const app = express();
-app.use(favicon(path.join(__dirname, 'public/img', 'favicon.ico')))
 
 const indexRouter = require('./routes/index');
 const booksRouter = require('./routes/books');
@@ -27,12 +26,15 @@ const booksRouter = require('./routes/books');
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
+// setup middleware
+app.use(favicon(path.join(__dirname, 'public/img', 'favicon.ico')))
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use('/static', express.static(path.join(__dirname, 'public')));
 
+// routes
 app.use('/', indexRouter);
 app.use('/books', booksRouter);
 
