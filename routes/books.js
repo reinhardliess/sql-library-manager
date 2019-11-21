@@ -2,6 +2,7 @@
 
 const express = require('express');
 const router = express.Router();
+const { errBook404 } = require('../lib/utils')
 
 const { Book } = require('../models');
 
@@ -11,7 +12,7 @@ function asyncHandler(cb) {
     try {
       await cb(req, res, next)
     } catch (error) {
-      res.status(500).send(error);
+      return next(error)
     }
   }
 }
@@ -30,7 +31,7 @@ router.get('/new', (req, res) => {
 });
 
 // POST create a new book
-router.post('/new', asyncHandler(async (req, res) => {
+router.post('/new', asyncHandler(async (req, res, next) => {
   try {
     const book = await Book.create(req.body);
     res.redirect('/');
@@ -40,51 +41,55 @@ router.post('/new', asyncHandler(async (req, res) => {
       const book = await Book.build(req.body);
       res.render("new-book", { book, errors: error.errors, title: "New Book" })
     } else {
-      throw error;
+      next(error);
     }
   }
 }));
 
 // GET individual book
-router.get("/:id", asyncHandler(async (req, res) => {
-  const book = await Book.findByPk(req.params.id);
+router.get("/:id", asyncHandler(async (req, res, next) => {
+  const { id } = req.params;
+  const book = await Book.findByPk(id);
   if (book) {
     res.render('update-book', { book, title: book.title });
   } else {
-    res.sendStatus(404);
+    next(errBook404(id));
   }
 }));
 
 // POST Update a book
-router.post('/:id', asyncHandler(async (req, res) => {
+router.post('/:id', asyncHandler(async (req, res, next) => {
+  const { id } = req.params;
   try {
-    const book = await Book.findByPk(req.params.id);
+    const book = await Book.findByPk(id);
     if (book) {
       await book.update(req.body);
       res.redirect('/books');
     } else {
-      res.sendStatus(404);
+      next(errBook404(id));
     }
   } catch (error) {
     // checking the error
     if (error.name === "SequelizeValidationError") {
       const book = await Book.build(req.body);
-      book.id = req.params.id;
+      book.id = id;
       res.render('update-book', { book, errors: error.errors, title: "Edit Book" })
     } else {
-      throw error;
+      next(error);
     }
   }
 }));
 
 // POST Delete individual book
-router.post('/:id/delete', asyncHandler(async (req, res) => {
-  const book = await Book.findByPk(req.params.id);
+router.post('/:id/delete', asyncHandler(async (req, res, next) => {
+  const { id } = req.params;
+  console.log({ id })
+  const book = await Book.findByPk(id);
   if (book) {
     await book.destroy();
     res.redirect("/books");
   } else {
-    res.sendStatus(404);
+    next(errBook404(id));
   }
 }));
 

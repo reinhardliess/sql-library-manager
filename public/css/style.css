@@ -95,3 +95,12 @@ input[type=text] {
 .error {
   color: rgb(236, 15, 15);
 }
+
+.highlight {
+  font-weight: bold;
+  background: #333;
+  color: #eee;
+  padding: 3px 6px;
+  border-radius: 3px;
+  margin: 0px 2px;
+}
