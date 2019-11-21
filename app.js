@@ -8,12 +8,14 @@ Reinhard Liess, 2019
 
 // This project was bootstrapped with the express application generator
 
-const createError = require('http-errors');
+// const createError = require('http-errors');
 const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const favicon = require('serve-favicon')
 const logger = require('morgan');
+
+const { stripHtml } = require('./lib/utils')
 
 const app = express();
 app.use(favicon(path.join(__dirname, 'public/img', 'favicon.ico')))
@@ -36,6 +38,7 @@ app.use('/books', booksRouter);
 
 // catch 404 not-found errors
 app.use(function (req, res, next) {
+  res.status(404);
   res.render('not-found', { url: req.url });
 });
 
@@ -43,9 +46,10 @@ app.use(function (req, res, next) {
 app.use(function (err, req, res, next) {
   res.locals.message = err.message || 'Unknown Error';
   res.locals.error = err;
-
+  err.status = err.status || 500;
+  console.error(`Error: ${stripHtml(res.locals.message)} (${err.status})`);
   // render the error page
-  res.status(err.status || 500);
+  res.status(err.status);
   res.render('error');
 });
 
