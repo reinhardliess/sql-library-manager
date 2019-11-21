@@ -14,3 +14,16 @@ block content
     |
     p
       input(type='submit', value='Delete Book')
+  script.
+    document.addEventListener('DOMContentLoaded', function () {
+        const input = document.getElementById('title');
+        input.focus();
+        input.select();
+        labels = document.getElementsByTagName('label');
+        for (let label of labels) {
+            label.addEventListener('click', function () {
+                const inputId = label.getAttribute('for');
+                document.getElementById(inputId).select();
+            });
+        }
+    });
