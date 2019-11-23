@@ -7,10 +7,22 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Launch Program",
+      "name": "Launch App",
       "skipFiles": [
         "<node_internals>/**"
       ],
+      "program": "${workspaceFolder}/bin/www"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Launch App (production)",
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "env": {
+        "NODE_ENV": "production"
+      },
       "program": "${workspaceFolder}/bin/www"
     }
   ]
