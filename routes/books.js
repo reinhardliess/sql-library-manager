@@ -9,6 +9,7 @@ const { Book } = require('../models');
 
 // GET listing of all books with pagination and search
 router.get('/', asyncHandler(async (req, res) => {
+
   // pagination
   const calcPages = (recCount, recPerPage) => Math.floor(recCount / recPerPage) + (recCount % recPerPage === 0 ? 0 : 1);
   const booksPerPage = 10;
@@ -77,7 +78,7 @@ router.get("/:id", asyncHandler(async (req, res, next) => {
   if (book) {
     res.render('update-book', { book, title: book.title });
   } else {
-    next(errBook404(id));
+    next(errBook404(id, req.url));
   }
 }));
 
@@ -90,7 +91,7 @@ router.post('/:id', asyncHandler(async (req, res, next) => {
       await book.update(req.body);
       res.redirect('/books');
     } else {
-      next(errBook404(id));
+      next(errBook404(id, req.url));
     }
   } catch (error) {
     // checking for validation error
@@ -112,7 +113,7 @@ router.post('/:id/delete', asyncHandler(async (req, res, next) => {
     await book.destroy();
     res.redirect("/books");
   } else {
-    next(errBook404(id));
+    next(errBook404(id, req.url));
   }
 }));
 
