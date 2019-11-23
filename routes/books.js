@@ -1,17 +1,52 @@
 'use strict';
 
 const express = require('express');
+const { sequelize, Sequelize } = require('../models/index');
 const router = express.Router();
 const { asyncHandler, errBook404 } = require('../lib/utils')
 
 const { Book } = require('../models');
 
-// GET listing of all books
+// GET listing of all books with pagination and search
 router.get('/', asyncHandler(async (req, res) => {
-  const books = await Book.findAll({
-    order: [["title", "ASC"]]
+  // pagination
+  const calcPages = (recCount, recPerPage) => Math.floor(recCount / recPerPage) + (recCount % recPerPage === 0 ? 0 : 1);
+  const booksPerPage = 10;
+  const reqPage = +req.query.page || 1
+  let books;
+
+  const objQuery = {
+    order: [["title", "ASC"]],
+    limit: booksPerPage,
+    offset: booksPerPage * (reqPage - 1)
+  };
+
+  // search
+  const query = req.query.q || '';
+  const queryLower = query.toLowerCase();
+  const { Op } = Sequelize;
+  if (query) {
+    books = await Book.findAndCountAll({
+      ...objQuery,
+      where: {
+        [Op.or]: [
+          { title: sequelize.where(sequelize.fn('LOWER', sequelize.col('title')), 'LIKE', `%${queryLower}%`) },
+          { author: sequelize.where(sequelize.fn('LOWER', sequelize.col('author')), 'LIKE', `%${queryLower}%`) },
+          { genre: sequelize.where(sequelize.fn('LOWER', sequelize.col('genre')), 'LIKE', `%${queryLower}%`) },
+          { year: sequelize.where(sequelize.fn('LOWER', sequelize.col('year')), 'LIKE', `%${queryLower}%`) }
+        ]
+      }
+    });
+  } else {
+    books = await Book.findAndCountAll(objQuery);
+  }
+
+  res.render("index", {
+    books: books.rows,
+    pages: { current: reqPage, count: calcPages(books.count, booksPerPage) },
+    title: "Books",
+    query
   });
-  res.render("index", { books, title: "Books" });
 }));
 
 // GET Add a new book form
