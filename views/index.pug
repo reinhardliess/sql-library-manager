@@ -45,10 +45,11 @@ block content
       p Try searching again using a different spelling or keyword.
   .pagination
     ul
+      - var txtQuery = query ? `&q=${query}` : ''
       - for(let i = 1; i <= pages.count; i++) {
         li
           if (i === pages.current)
-            a.active(href=`/books?page=${i}&q=${query}`) #{i}
+            a.active(href=`/books?page=${i}${txtQuery}`) #{i}
           else
-            a(href=`/books?page=${i}&q=${query}`) #{i}
+            a(href=`/books?page=${i}${txtQuery}`) #{i}
       - }
