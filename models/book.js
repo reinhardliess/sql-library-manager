@@ -22,7 +22,17 @@ module.exports = (sequelize) => {
       }
     },
     genre: Sequelize.STRING,
-    year: Sequelize.INTEGER
+    year: {
+      type: Sequelize.INTEGER,
+      validate: {
+        customValidator(value) {
+          if (value.trim() && !value.match(/\d{1,4}/)) {
+            throw new Error('"Year" must be between 1 and 4 digits and numeric');
+          }
+        }
+      }
+    }
+
   }, { sequelize });
 
   return Book;
