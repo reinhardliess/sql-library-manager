@@ -116,8 +116,8 @@ body {
   margin: 20px auto 40px auto;
   background-color: #fff;
   color: #333;
-  border-radius: 4px;
-  padding: 5px 0px 10px 10px;
+  border-radius: 5px;
+  padding: 5px 0px 10px 17px;
 }
 
 /* Pagination */
