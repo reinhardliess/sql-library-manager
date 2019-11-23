@@ -4,7 +4,13 @@ block content
   h1= title
   |
   p
-    a.button(href='books/new') Create New Book
+    a.button.add-book(href='books/new') Create New Book
+  |
+  .search
+    form(method='get', action='/books')
+      input#book-search(type='search', name='q', placeholder='Search for a book')
+      |
+      input(type='submit', value='Search')
   |
   table
     thead
@@ -28,3 +34,21 @@ block content
           td= book.genre
           |
           td= book.year
+  if (query && !books.length)
+    div.not-found
+      p
+        | Your search for
+        |
+        span.highlight= query
+        |  didn&apos;t return any results.
+      |
+      p Try searching again using a different spelling or keyword.
+  .pagination
+    ul
+      - for(let i = 1; i <= pages.count; i++) {
+        li
+          if (i === pages.current)
+            a.active(href=`/books?page=${i}&q=${query}`) #{i}
+          else
+            a(href=`/books?page=${i}&q=${query}`) #{i}
+      - }
