@@ -1,0 +1,1 @@
+The development database \(library.db) must be copied in this folder.
