@@ -11,11 +11,12 @@ const { Book } = require('../models');
 router.get('/', asyncHandler(async (req, res) => {
 
   // pagination
-  const calcPages = (recCount, recPerPage) => Math.floor(recCount / recPerPage) + (recCount % recPerPage === 0 ? 0 : 1);
+  const calcPages = (recCount, recPerPage) => Math.floor(recCount / recPerPage) + (recCount % recPerPage ? 1 : 0);
   const booksPerPage = 10;
   const reqPage = +req.query.page || 1
   let books;
 
+  // common query object for browse and search
   const objQuery = {
     order: [["title", "ASC"]],
     limit: booksPerPage,
