@@ -43,13 +43,14 @@ block content
         |  didn&apos;t return any results.
       |
       p Try searching again using a different spelling or keyword.
-  .pagination
-    ul
-      - var txtQuery = query ? `&q=${query}` : ''
-      - for(let i = 1; i <= pages.count; i++) {
-        li
-          if (i === pages.current)
-            a.active(href=`/books?page=${i}${txtQuery}`) #{i}
-          else
-            a(href=`/books?page=${i}${txtQuery}`) #{i}
-      - }
+  if (pages.count > 1)
+    .pagination
+      ul
+        - const txtQuery = query ? `&q=${query}` : ''
+        - for(let i = 1; i <= pages.count; i++) {
+          li
+            if (i === pages.current)
+              a.active(href=`/books?page=${i}${txtQuery}`) #{i}
+            else
+              a(href=`/books?page=${i}${txtQuery}`) #{i}
+        - }
